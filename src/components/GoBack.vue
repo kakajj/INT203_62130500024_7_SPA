@@ -15,11 +15,12 @@ export default {
 <style scoped>
 .go-back{
     display: flex;
-    width: fit-content;
     cursor: pointer;
+    @apply w-2/12
 }
 button {
     border: antiquewhite;
     background-color: seashell;
+    @apply w-full
 }
 </style>
