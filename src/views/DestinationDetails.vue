@@ -29,15 +29,26 @@
           </router-link>
         </div>
       </div>
-      <router-view :key="$route.path" />
+      <router-view :key="$route.fullPath"></router-view>
     </section>
   </div>
 </template>
 <script>
-import store from "@/store";
 import GoBack from "../components/GoBack.vue"
+
 export default {
-  data() {},
+  created() {
+    this.fetchDestination();
+  },
+  watch: {
+    '$route': 'fetchDestination'
+  },
+  data() {
+    return {
+      destinationArray: [],
+      url: "http://localhost:5000/destinations",
+    }
+  },
   components:{
     GoBack
   },
@@ -49,11 +60,25 @@ export default {
   },
   computed: {
     destination() {
-      return store.destinations.find(
+      return this.destinationArray.find(
         (destination) => destination.slug == this.slug
       );
     },
   },
+  methods:{
+    fetchDestination() {
+      fetch(this.url)
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          this.destinationArray = data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
 };
 </script>
 

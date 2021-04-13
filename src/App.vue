@@ -1,18 +1,14 @@
 <template>
   <the-navigation></the-navigation>
-  <transition name="fade">
-    <router-view :key="$route.path" />
-  </transition>
+  <!-- <transition name="fade"> -->
+    <router-view :key="$route.fullPath"></router-view>
+  <!-- </transition> -->
 </template>
 
 <script>
-import TheNavigation from "./components/TheNavigation.vue";
 
-export default {
-  components: {
-    TheNavigation,
-  },
-};
+
+export default {};
 </script>
 
 <style>

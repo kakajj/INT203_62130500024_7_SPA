@@ -1,31 +1,52 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory
+} from 'vue-router'
 import Home from '../views/Home.vue'
 
-const routes = [
-  {
+const routes = [{
     path: '/',
     name: 'Home',
-    component: Home,
-    props:true
+    component: Home
   },
   {
-    path:'/destination/:slug',
-    name: 'DestinationDetails',
-    props:true,
-    component: ()=> import(/* webpackChunkName: "DestinationDetails" */ '../views/DestinationDetails'),
-    children:[
-      {
-        path: ":expSlug",
-        name: "expDetails",
-        props:true,
-        component: ()=> import(/* webpackChunkName: "expDetails" */ '../views/Experiences'),
-      }
-    ]
+    path: '/diaries/',
+    name: 'Diaries',
+    props: true,
+    component: () => import( /* webpackChunkName: "Diaries" */ '../views/DiariesPage'),
+    // children: [{
+    //   path: ":expSlug",
+    //   name: "expDetails",
+    //   props: true,
+    //   component: () => import( /* webpackChunkName: "expDetails" */ '../views/Experiences'),
+    // }]
+  },
+  // {
+  //   path:'/destination/:slug',
+  //   name: 'DestinationDetails',
+  //   props:true,
+  //   component: ()=> import(/* webpackChunkName: "DestinationDetails" */ '../views/DestinationDetails'),
+  //   children:[
+  //     {
+  //       path: ":expSlug",
+  //       name: "expDetails",
+  //       props:true,
+  //       component: ()=> import(/* webpackChunkName: "expDetails" */ '../views/Experiences'),
+  //     }
+  //   ]
+  // },
+  {
+    path: "/about",
+    name: 'AboutPage',
+    component: () => import(
+      /* webpackChunkName: 'AboutPage'*/
+      "../views/About"
+    )
   },
   {
     path: "/:pathMatch(.*)",
     name: 'NotFound',
-    component: ()=> import (
+    component: () => import(
       /* webpackChunkName: 'NotFound'*/
       "../views/NotFound"
     )
