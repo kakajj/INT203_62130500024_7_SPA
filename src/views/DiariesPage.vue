@@ -1,13 +1,17 @@
 <template>
   <section class="diary">
     <go-back></go-back>
-    <h1>All Diaries</h1>
+    <h1>ไดอารี่ทั้งหมด</h1>
+    <p class="font-light">Click ที่ชื่อไดอารี่เพื่อเปิดอ่าน</p>
     <div class="content-block" v-if="checkArray">
-      <ul class="list" v-for="d in destinationArray" :key="d.name">
-        <li class="list-item">{{ d.name }}</li>
+      <ul class="list" v-for="(d,index) in destinationArray" :key="d.name">
+        <router-link :to="{ name: 'DiaryDetail', params: { slug: d.id }}" class="list-item">
+          <li>ไดอารี่ที่ {{ index }}) {{ d.name }} <p class="font-light">สร้างเมื่อ {{d.date}} เวลา {{d.time}}</p> </li>
+        </router-link>
+        <router-view :key="$route.path" />
         <div class="action">
           <button class="btn-edit">Edit</button>
-          <button class="btn-delete">Delete</button>
+          <button class="btn-delete" @click="deleteDiary(d.id)">Delete</button>
         </div>
       </ul>
     </div>
@@ -15,39 +19,31 @@
     <div class="btn-add">
       <button class="btn-add-new" @click="openAddForm">{{ formStatus }}</button>
     </div>
-    <div v-show="addForm">
+    <div v-show="addForm" class="mb-20">
       <!-- component -->
       <div class="heading text-center font-bold text-2xl m-5 text-gray-800">
-        New Post
+        New Diary (บันทึก TimeStamp อัตโนมัติ)
       </div>
-      <div
-        class="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl"
-      >
+      <div class="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl">
+        <p class="invalid" v-if="invalidName">Please enter correct name.</p>
         <input
           class="title bg-gray-100 border border-gray-300 p-2 mb-4 outline-none"
           spellcheck="false"
           placeholder="Diary Name"
           type="text"
-          v-model="dName"
-        />
+          v-model="dName" />
+        <p class="invalid" v-if="invalidDescription">Please enter something.</p>
         <textarea
           class="description bg-gray-100 sec p-3 h-60 border border-gray-300 outline-none"
           spellcheck="false"
           placeholder="Describe everything about this diary"
-          v-model="dDescription"
-        ></textarea>
+          v-model="dDescription"></textarea>
         <!-- buttons -->
-        <div class="buttons flex">
-          <div
-            class="border border-gray-300 p-1 px-4 font-semibold cursor-pointer text-gray-500 ml-auto"
-           @click="clear">
-            Cancel
-          </div>
-          <div
-            class="border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500"
-          @click="submit">
-            Post
-          </div>
+        <div class="buttons flex mt-4">
+          <div class="border border-gray-300 p-1 px-4 font-semibold cursor-pointer text-gray-500 ml-auto"
+            @click="clear">Cancel</div>
+          <div class="border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500"
+            @click="submit">Post</div>
         </div>
       </div>
     </div>
@@ -56,6 +52,7 @@
 
 <script>
 import GoBack from "../components/GoBack";
+const axios = require("axios");
 
 export default {
   created() {
@@ -78,11 +75,13 @@ export default {
   },
   data() {
     return {
-      dName: '',
-      dDescription: '',
+      dName: "",
+      dDescription: "",
       addForm: false,
       destinationArray: [],
       url: "http://localhost:5000/diaries",
+      invalidName: false,
+      invalidDescription:false
     };
   },
   methods: {
@@ -90,54 +89,78 @@ export default {
       this.addForm = !this.addForm;
     },
     fetchDestination() {
-      fetch(this.url)
-        .then((res) => {
-          return res.json();
+      axios
+        .get(this.url)
+        .then((response) => {
+          this.destinationArray = response.data;
+          return response.data;
         })
-        .then((data) => {
-          this.destinationArray = data;
-        })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          console.error(err);
         });
     },
-    clear(){
-      this.dName = '';
-      this.dDescription = '';
+    clear() {
+      this.dName = "";
+      this.dDescription = "";
+      this.invalidName = false,
+      this.invalidDescription = false
     },
-    post(newSurveyObject){
-      fetch("http://localhost:5000/diaries", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
+    post(newSurveyObject) {
+      axios
+        .post("http://localhost:5000/diaries", {
           name: newSurveyObject.name,
           date: newSurveyObject.date,
           time: newSurveyObject.time,
-          description: newSurveyObject.description
-        }),
-      })
+          description: newSurveyObject.description,
+        })
         .then((response) => {
-          return response.json();
+          this.destinationArray = [...this.destinationArray, response.data];
         })
-        .then((data) => {
-          this.destinationArray = [...this.destinationArray, data];
-        })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          console.error(err);
+        }).then(()=>{
+            this.clear();
         });
-      this.clear();
     },
-    submit(){
+    deleteDiary(id) {
+      axios
+        .delete(`http://localhost:5000/diaries/${id}`)
+        .then((response) => {
+        return response.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .then(()=>{
+        this.destinationArray = this.destinationArray.filter(
+        (diary) => diary.id !== id);
+        });
+    },
+    submit() {
+      this.invalidName = this.dName === "" ? true : false;
+      this.invalidDescription = this.dDescription === "" ? true : false;
+      if(this.invalidName || this.invalidDescription){
+        return ;
+      }else{
       let today = new Date();
       this.post({
         name: this.dName,
-        date: today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate(),
-        time: today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(),
-        description: this.dDescription
-      })
-    }
+        date:
+          today.getFullYear() +
+          "-" +
+          (today.getMonth() + 1) +
+          "-" +
+          today.getDate(),
+        time:
+          today.getHours() +
+          ":" +
+          today.getMinutes() +
+          ":" +
+          today.getSeconds(),
+        description: this.dDescription,
+      });
+      }
+    },
   },
 };
 </script>
@@ -150,7 +173,7 @@ export default {
   @apply flex flex-row  justify-between py-5;
 }
 .list-item {
-  @apply ml-10 bg-green-200 hover:bg-green-500 text-white font-bold w-4/6 text-left;
+  @apply ml-10 bg-green-200 hover:bg-green-500 text-black font-bold w-4/6 text-left;
 }
 .btn-edit {
   @apply mx-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full;
@@ -169,5 +192,8 @@ export default {
 }
 .btn-add-new {
   @apply bg-green-500 hover:bg-green-700 text-white font-bold w-full h-10 text-center mb-10;
+}
+.invalid{
+  @apply text-left font-bold text-red-400
 }
 </style>

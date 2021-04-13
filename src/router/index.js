@@ -15,20 +15,12 @@ const routes = [{
     props: true,
     component: () => import( /* webpackChunkName: "Diaries" */ '../views/DiariesPage'),
   },
-  // {
-  //   path:'/destination/:slug',
-  //   name: 'DestinationDetails',
-  //   props:true,
-  //   component: ()=> import(/* webpackChunkName: "DestinationDetails" */ '../views/DestinationDetails'),
-  //   children:[
-  //     {
-  //       path: ":expSlug",
-  //       name: "expDetails",
-  //       props:true,
-  //       component: ()=> import(/* webpackChunkName: "expDetails" */ '../views/Experiences'),
-  //     }
-  //   ]
-  // },
+  {
+    path:'/read/:slug',
+    name: 'DiaryDetail',
+    props:true,
+    component: ()=> import(/* webpackChunkName: "DiaryDetail" */ '../views/DiaryDetail'),
+  },
   {
     path: "/about",
     name: 'AboutPage',
