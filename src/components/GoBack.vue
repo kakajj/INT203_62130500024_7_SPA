@@ -3,6 +3,7 @@
         <button @click="goBack">Go Back</button>
     </span>
 </template>
+
 <script>
 export default {
     methods:{
@@ -12,15 +13,14 @@ export default {
     }
 }
 </script>
+
 <style scoped>
 .go-back{
-    display: flex;
-    cursor: pointer;
-    @apply w-2/12 
+    @apply w-full h-10 flex cursor-pointer
 }
 button {
     border: antiquewhite;
     background-color: seashell;
-    @apply w-full
+    @apply w-full hover:bg-red-100
 }
 </style>

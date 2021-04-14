@@ -23,7 +23,7 @@ export default {
 
 <style scoped>
 .card-area {
-  @apply max-w-3xl pt-4 px-8 bg-red-100 shadow-lg rounded-lg mt-5 mb-2 mx-auto;
+  @apply max-w-3xl pt-4 px-8 bg-red-100 hover:bg-red-200 shadow-lg rounded-lg mt-5 mb-2 mx-auto;
 }
 .text-area h2 {
   @apply text-gray-800 text-3xl font-semibold;

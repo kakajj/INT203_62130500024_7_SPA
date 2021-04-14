@@ -24,14 +24,14 @@
           spellcheck="false"
           placeholder="Diary Name"
           type="text"
-          v-model="diary.name"
+          v-model="newDiary.name"
         />
         <p class="invalid" v-if="invalidDescription">Please enter something.</p>
         <textarea
           class="description bg-gray-100 sec p-3 h-60 border border-gray-300 outline-none"
           spellcheck="false"
           placeholder="Describe everything about this diary"
-          v-model="diary.description"
+          v-model="newDiary.desc"
         ></textarea>
         <!-- buttons -->
         <div class="buttons flex justify-end mt-4">
@@ -64,7 +64,6 @@ export default {
         desc: "",
         time: "",
         date: "",
-        id: null
       },
       url: "http://localhost:5000/diaries/",
       addForm: false,
@@ -80,28 +79,27 @@ export default {
   },
   methods: {
     updateJSON() {
-      this.invalidName = this.diary.name === "" ? true : false;
-      this.invalidDescription = this.diary.description === "" ? true : false;
+      this.invalidName = this.newDiary.name === "" ? true : false;
+      this.invalidDescription = this.newDiary.desc === "" ? true : false;
       if(this.invalidName || this.invalidDescription){
-        return ;
+        return console.log('Error Invalid data');
       }else{
-      this.newDiary.name = this.diary.name;
-      this.newDiary.desc = this.diary.description;
       let today = new Date();
-      axios.put(this.url + this.$route.params.slug, {
+      let updatedDiary = {
         name: this.newDiary.name,
         description: this.newDiary.desc,
         date: today.getFullYear() + "-" +(today.getMonth() + 1) +"-" + today.getDate(),
         time: today.getHours() +":" +today.getMinutes() + ":" +today.getSeconds()
-      }).then((response)=>{
+      }
+      axios.put(this.url + this.$route.params.slug,updatedDiary)
+      .then((response)=>{
         return response.data
       }).then(()=>{
-          this.diary = this.newDiary ;
+          this.diary = updatedDiary ;
       }).catch((error)=>{
         console.log(error);
       });
       this.addForm = !this.addForm;
-      location.reload();
       }
     },
     fetchDestination() {
@@ -110,6 +108,9 @@ export default {
         .then((response) => {
           this.diary = response.data;
           return response.data;
+        }).then(()=>{
+          this.newDiary.name = this.diary.name;
+          this.newDiary.desc = this.diary.description;
         })
         .catch((err) => {
           console.error(err);
