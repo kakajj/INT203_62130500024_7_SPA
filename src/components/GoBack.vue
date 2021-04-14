@@ -16,7 +16,7 @@ export default {
 .go-back{
     display: flex;
     cursor: pointer;
-    @apply w-2/12
+    @apply w-2/12 
 }
 button {
     border: antiquewhite;

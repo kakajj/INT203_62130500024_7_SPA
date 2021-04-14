@@ -10,7 +10,6 @@
         </router-link>
         <router-view :key="$route.path" />
         <div class="action">
-          <button class="btn-edit">Edit</button>
           <button class="btn-delete" @click="deleteDiary(d.id)">Delete</button>
         </div>
       </ul>
@@ -170,16 +169,13 @@ export default {
   @apply mx-auto max-w-4xl;
 }
 .list {
-  @apply flex flex-row  justify-between py-5;
+  @apply flex flex-row inline-block  justify-between py-5;
 }
 .list-item {
-  @apply ml-10 bg-green-200 hover:bg-green-500 text-black font-bold w-4/6 text-left;
-}
-.btn-edit {
-  @apply mx-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full;
+  @apply ml-10 bg-green-200 hover:bg-green-500 text-black font-bold w-9/12 text-left pl-5;
 }
 .btn-delete {
-  @apply bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full;
+  @apply bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full w-28;
 }
 .content-block {
   @apply bg-gray-100;
