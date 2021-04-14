@@ -10,6 +10,7 @@
     <div class="the-btn">
       <button class="edit" @click="addForm = !addForm">Edit This Diary</button>
     </div>
+    <modal v-show="isModal" @close="closeModal"></modal>
     <div v-show="addForm" class="mb-20">
       <!-- component -->
       <div class="heading text-center font-bold text-2xl m-5 text-gray-800">
@@ -48,11 +49,12 @@
 
 <script>
 import GoBack from "../components/GoBack.vue";
+import Modal from '../components/Modal.vue';
 import readDiary from "../components/readDiary";
 const axios = require("axios");
 
 export default {
-  components: { GoBack, readDiary },
+  components: { GoBack, readDiary, Modal },
   created() {
     this.fetchDestination();
   },
@@ -68,7 +70,8 @@ export default {
       url: "http://localhost:5000/diaries/",
       addForm: false,
       invalidName:false,
-      invalidDescription:false
+      invalidDescription:false,
+      isModal:false
     };
   },
   props: {
@@ -78,6 +81,9 @@ export default {
     },
   },
   methods: {
+    closeModal(){
+      this.isModal = false;
+    },
     updateJSON() {
       this.invalidName = this.newDiary.name === "" ? true : false;
       this.invalidDescription = this.newDiary.desc === "" ? true : false;
@@ -96,10 +102,11 @@ export default {
         return response.data
       }).then(()=>{
           this.diary = updatedDiary ;
+          this.addForm = !this.addForm;
+          this.isModal = true
       }).catch((error)=>{
         console.log(error);
       });
-      this.addForm = !this.addForm;
       }
     },
     fetchDestination() {

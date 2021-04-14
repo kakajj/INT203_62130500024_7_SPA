@@ -18,6 +18,9 @@
     <div class="btn-add">
       <button class="btn-add-new" @click="openAddForm">{{ formStatus }}</button>
     </div>
+
+    <modal v-show="isModal" @close="closeModal"> </modal>
+
     <div v-show="addForm" class="mb-20">
       <!-- component -->
       <div class="heading text-center font-bold text-2xl m-5 text-gray-800">
@@ -51,6 +54,7 @@
 
 <script>
 import GoBack from "../components/GoBack";
+import Modal from '../components/Modal.vue';
 const axios = require("axios");
 
 export default {
@@ -59,6 +63,7 @@ export default {
   },
   components: {
     GoBack,
+    Modal
   },
   computed: {
     checkArray() {
@@ -80,10 +85,14 @@ export default {
       destinationArray: [],
       url: "http://localhost:5000/diaries",
       invalidName: false,
-      invalidDescription:false
+      invalidDescription:false,
+      isModal:false
     };
   },
   methods: {
+    closeModal(){
+      this.isModal = false;
+    },
     openAddForm() {
       this.addForm = !this.addForm;
     },
@@ -93,6 +102,8 @@ export default {
         .then((response) => {
           this.destinationArray = response.data;
           return response.data;
+        }).then(()=>{
+          this.isModal = true;
         })
         .catch((err) => {
           console.error(err);
@@ -118,6 +129,7 @@ export default {
         .catch((err) => {
           console.error(err);
         }).then(()=>{
+          this.isModal = true;
             this.clear();
         });
     },
@@ -133,6 +145,7 @@ export default {
         .then(()=>{
         this.destinationArray = this.destinationArray.filter(
         (diary) => diary.id !== id);
+        this.isModal = true;
         });
     },
     submit() {
@@ -141,6 +154,7 @@ export default {
       if(this.invalidName || this.invalidDescription){
         return ;
       }else{
+      this.addForm = false;
       let today = new Date();
       this.post({
         name: this.dName,

@@ -6,5 +6,4 @@ import TheNavigation from './components/TheNavigation.vue'
 
 const app = createApp(App)
 app.component('TheNavigation',TheNavigation)
-
 app.use(router).mount('#app')
